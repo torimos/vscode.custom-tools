@@ -1,25 +1,50 @@
 {
     "variables": {
         "var1": "abc",
-        "var2": 1234
+        "var2": 1234,
+        "cmd": "runShell"
     },
     "statusbar": [
-         {
-             "text": "$(flame)",
-             "tooltip": "echo",
-             "commands": [
+        {
+            "text": "$(terminal)",
+            "tooltip": "run shell 1",
+            "commands": [
+                {
+                    "id": "workbench.action.tasks.runTask",
+                    "args": "runShell"
+                }
+            ]
+        },
+        {
+            "text": "$(terminal)",
+            "tooltip": "run shell 2",
+            "commands": [
+                {
+                    "id": "workbench.action.tasks.runTask",
+                    "args": {
+                        "task": "${cmd}"
+                    }
+                }
+            ]
+        },
+        {
+            "text": "$(flame)",
+            "tooltip": "cmd2",
+            "commands": [
                 {
                     "id": "workbench.action.terminal.focus"
                 },
                 {
                     "id": "workbench.action.terminal.sendSequence",
-                    "args": "echo ${file} ${var1} ${var2}\n"
+                    "args": {
+                        "text": "echo ${file} ${var1} ${var2}\n"
+                    }
                 }
-             ]
-         },
-         {
+            ]
+        },
+        {
             "text": "$(arrow-left)",
-            "tooltip": "showTasks",
+            "tooltip": "cmd3",
             "commands": [
                 {
                     "id": "workbench.action.tasks.showTasks"

@@ -13,7 +13,29 @@ const config = require('./config');
 
 let statusBarItems = [];
 let statusBarCommands = [];
-let reloadCounter = 0;
+let activateCounter = 0;
+let log = vscode.window.createOutputChannel("custom-tools");
+
+function updateArgsWithVariables(input, variables) {
+    if (input) {
+		if (typeof input === 'string') {
+			for (const [key, value] of Object.entries(variables)) {
+				const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
+				input = input.replace(regex, value);
+			}
+			return input;
+		} 
+		else if (typeof input === 'object' && input !== null) {
+			const updatedObject = {};
+			for (const [key, value] of Object.entries(input)) {
+				updatedObject[key] = updateArgsWithVariables(value, variables);
+			}
+			return updatedObject;
+		}
+	}
+    return input;
+}
+
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -23,10 +45,9 @@ function activate(context) {
 	// This line of code will only be executed once when your extension is activated
 	//vscode.window.showInformationMessage('...!');
 	
-	let log = vscode.window.createOutputChannel("custom-tools");
 	config.watch((cfg)=>{
-		//log.appendLine(`[${reloadCounter}] Reloading Custom-Tools: ${JSON.stringify(cfg)}`);
-		reloadCounter++;
+		log.appendLine(`[${activateCounter}] Activate Custom-Tools: ${JSON.stringify(cfg)}`);
+		activateCounter++;
 		statusBarItems.forEach(item => item.dispose());
         statusBarItems = [];
 		statusBarCommands.forEach(item => item.dispose());
@@ -36,14 +57,8 @@ function activate(context) {
 			let cmdName = `custom-tools.statusbar.command_${idx}`;
 			let command = vscode.commands.registerCommand(cmdName, () => {
 				item.commands.forEach((cmd) => {
-					let args = cmd.args;
-					if (args) {
-						for (const [key, value] of Object.entries(cfg.variables || {})) {
-							const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
-							args = args.replace(regex, value);
-						}
-					}
-					vscode.commands.executeCommand(cmd.id, {"text": args});
+					let args = updateArgsWithVariables(cmd.args, cfg.variables || {});
+					vscode.commands.executeCommand(cmd.id, args);
 				});
 			});
 			statusBarCommands.push(command)
@@ -62,6 +77,7 @@ function activate(context) {
 
 // This method is called when your extension is deactivated
 function deactivate() {
+	log.appendLine(`[${activateCounter}] Deactivate Custom-Tools`);
 }
 
 module.exports = {
