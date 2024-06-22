@@ -1,0 +1,23 @@
+{
+    "statusbar": [
+         {
+             "text": "$(flame)",
+             "tooltip": "echo4",
+             "commands": [
+                 {
+                     "id": "workbench.action.tasks.runTask",
+                     "args": "echo"
+                 }
+             ]
+         },
+         {
+            "text": "$(arrow-left)",
+            "tooltip": "showTasks2",
+            "commands": [
+                {
+                    "id": "workbench.action.tasks.showTasks"
+                }
+            ]
+        }
+     ]
+ }
