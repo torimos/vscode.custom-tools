@@ -25,7 +25,7 @@ function activate(context) {
 	
 	let log = vscode.window.createOutputChannel("custom-tools");
 	config.watch((cfg)=>{
-		log.appendLine(`[${reloadCounter}] Reloading Custom-Tools: ${JSON.stringify(cfg)}`);
+		//log.appendLine(`[${reloadCounter}] Reloading Custom-Tools: ${JSON.stringify(cfg)}`);
 		reloadCounter++;
 		statusBarItems.forEach(item => item.dispose());
         statusBarItems = [];
@@ -36,7 +36,14 @@ function activate(context) {
 			let cmdName = `custom-tools.statusbar.command_${idx}`;
 			let command = vscode.commands.registerCommand(cmdName, () => {
 				item.commands.forEach((cmd) => {
-					vscode.commands.executeCommand(cmd.id, cmd.args);
+					let args = cmd.args;
+					if (args) {
+						for (const [key, value] of Object.entries(cfg.variables || {})) {
+							const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
+							args = args.replace(regex, value);
+						}
+					}
+					vscode.commands.executeCommand(cmd.id, {"text": args});
 				});
 			});
 			statusBarCommands.push(command)

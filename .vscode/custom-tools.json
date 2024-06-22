@@ -1,18 +1,25 @@
 {
+    "variables": {
+        "var1": "abc",
+        "var2": 1234
+    },
     "statusbar": [
          {
              "text": "$(flame)",
-             "tooltip": "echo4",
+             "tooltip": "echo",
              "commands": [
-                 {
-                     "id": "workbench.action.tasks.runTask",
-                     "args": "echo"
-                 }
+                {
+                    "id": "workbench.action.terminal.focus"
+                },
+                {
+                    "id": "workbench.action.terminal.sendSequence",
+                    "args": "echo ${file} ${var1} ${var2}"
+                }
              ]
          },
          {
             "text": "$(arrow-left)",
-            "tooltip": "showTasks2",
+            "tooltip": "showTasks",
             "commands": [
                 {
                     "id": "workbench.action.tasks.showTasks"
