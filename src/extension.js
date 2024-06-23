@@ -55,11 +55,28 @@ function activate(context) {
 		cfg.statusbar.forEach((item, idx) => {
 
 			let cmdName = `custom-tools.statusbar.command_${idx}`;
+
 			let command = vscode.commands.registerCommand(cmdName, () => {
-				item.commands.forEach((cmd) => {
-					let args = updateArgsWithVariables(cmd.args, cfg.variables || {});
-					vscode.commands.executeCommand(cmd.id, args);
-				});
+
+				let commandCode = ()=> {
+					item.commands.forEach((cmd) => {
+						let args = updateArgsWithVariables(cmd.args, cfg.variables || {});
+						vscode.commands.executeCommand(cmd.id, args);
+					});
+				}
+	
+				if (item.confirmation) {
+					vscode.window
+						.showInformationMessage(item.confirmation, ...["Yes", "No"])
+						.then(answer => {
+							if (answer === "Yes") {
+								commandCode();
+							}
+						})
+				}
+				else {
+					commandCode();
+				}
 			});
 			statusBarCommands.push(command)
 			context.subscriptions.push(command);

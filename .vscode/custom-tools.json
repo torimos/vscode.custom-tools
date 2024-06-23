@@ -8,6 +8,7 @@
         {
             "text": "$(terminal)",
             "tooltip": "run shell 1",
+            "confirmation": "Are you sure?",
             "commands": [
                 {
                     "id": "workbench.action.tasks.runTask",
